@@ -3,3 +3,4 @@ numpy
 matplotlib==3.5.2
 scikit-learn
 seaborn
+openpyxl

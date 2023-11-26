@@ -24,10 +24,10 @@ if uploaded_file is not None:
         financial_data = pd.read_excel(uploaded_file, index_col=0)
 
         # Check if the required columns exist in financial_data
-        required_columns_financial_data = financial_data.columns
-        if not set(['Total Revenue/Income', 'Total Operating Expense', 'Income/Profit Before Tax', 'Net Income']).issubset(required_columns_financial_data):
+        required_columns_financial_data = ['Total Revenue/Income', 'Total Operating Expense', 'Income/Profit Before Tax', 'Net Income']
+        if not set(required_columns_financial_data).issubset(financial_data.columns):
             st.write("Error: One or more required columns are missing in the financial data.")
-            st.write(f"Missing columns: {', '.join(set(['Total Revenue/Income', 'Total Operating Expense', 'Income/Profit Before Tax', 'Net Income']) - set(required_columns_financial_data))}")
+            st.write(f"Missing columns: {', '.join(set(required_columns_financial_data) - set(financial_data.columns))}")
             st.stop()
 
         # Merge data based on the common date index

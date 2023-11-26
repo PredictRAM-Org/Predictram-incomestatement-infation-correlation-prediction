@@ -51,9 +51,52 @@ if uploaded_file is not None:
         plt.savefig('correlation_matrix.png')
         st.image('correlation_matrix.png')
 
-        # Fetch and display inflation data
-        st.subheader('Inflation Data')
-        st.dataframe(cpi_data)
+        # Plot and save correlation graphs
+        for column in ['Total Revenue/Income', 'Total Operating Expense', 'Income/Profit Before Tax', 'Net Income']:
+            plt.figure(figsize=(8, 6))
+            sns.scatterplot(x='Inflation', y=column, data=merged_data)
+            plt.title(f'Correlation between Inflation and {column}')
+            plt.xlabel('Inflation')
+            plt.ylabel(column)
+            plt.savefig(f'correlation_{column.lower().replace(" ", "_")}.png')
+            st.image(f'correlation_{column.lower().replace(" ", "_")}.png')
+
+        # Regression analysis
+        features = ['Inflation']
+
+        for target_col in ['Total Revenue/Income', 'Net Income']:
+            X = merged_data[features]
+            y = merged_data[target_col]
+
+            # Check if there are enough samples to split
+            if len(X) <= 1:
+                st.write(f"Error: Not enough samples to split for {target_col}.")
+                continue  # Skip to the next target column
+
+            # Split data into training and testing sets
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+            # Create and train the model
+            model = LinearRegression()
+            model.fit(X_train, y_train)
+
+            # Make predictions
+            y_pred = model.predict(X_test)
+
+            # Calculate and display Mean Squared Error
+            mse = mean_squared_error(y_test, y_pred)
+            st.write(f'Mean Squared Error for {target_col}: {mse:.2f}')
+
+            # Plot and save regression line
+            plt.figure(figsize=(8, 6))
+            plt.scatter(X_test, y_test, color='blue', label='Actual')
+            plt.plot(X_test, y_pred, color='red', linewidth=2, label='Predicted')
+            plt.title(f'Regression Analysis for {target_col}')
+            plt.xlabel('Inflation')
+            plt.ylabel(target_col)
+            plt.legend()
+            plt.savefig(f'regression_{target_col.lower().replace(" ", "_")}.png')
+            st.image(f'regression_{target_col.lower().replace(" ", "_")}.png')
 
     except Exception as e:
         st.write(f"Error: {e}")

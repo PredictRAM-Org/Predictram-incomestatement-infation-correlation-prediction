@@ -59,6 +59,11 @@ if uploaded_file is not None:
             X = merged_data[features]
             y = merged_data[target_col]
 
+            # Check if there are enough samples to split
+            if len(X) <= 1:
+                st.write(f"Error: Not enough samples to split for {target_col}.")
+                continue  # Skip to the next target column
+
             # Split data into training and testing sets
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
